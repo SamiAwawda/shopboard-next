@@ -1,0 +1,9 @@
+.next
+node_modules
+package-lock.json
+.claude
+.serena
+public
+tsconfig.tsbuildinfo
+next-env.d.ts
+AGENTS.md

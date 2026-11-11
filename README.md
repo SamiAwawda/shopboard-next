@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShopBoard (Next.js)
 
-## Getting Started
+A small shop built with Next.js 16 (App Router), Tailwind 4 and its own UI kit in `components/ui`. It is the Next.js version of the React ShopBoard.
 
-First, run the development server:
+## Pages
+
+| Route            | What it shows                                    |
+| ---------------- | ------------------------------------------------ |
+| `/`              | Welcome text and a hero carousel of the products |
+| `/products`      | Product list with search and category filter     |
+| `/products/[id]` | One product. An unknown id shows the 404 page    |
+
+Also: a cart in a side sheet (saved in localStorage), a "Clear cart" confirmation modal, `loading.tsx` skeletons, `error.tsx` with "Try again", and light/dark mode.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Products come from `https://shopboard-api.vercel.app`. To see the loading and error states, set `API_BASE_URL` (and remove it afterwards):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+API_BASE_URL=https://shopboard-api.vercel.app/delay/3000 npm run dev   # slow: shows the skeleton
+API_BASE_URL=https://shopboard-api.vercel.app/fail/500 npm run dev     # fails: shows the error page
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Checks
 
-## Learn More
+```bash
+npm run typecheck
+npm run lint
+npm run format:check   # npm run format fixes it
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+  app/          routes only: page, layout, loading, error, not-found
+  components/   components that know ShopBoard (Navbar, Hero, ProductGrid, CartButton...)
+    ui/         the generic kit: Button, Input, Card, Badge, Modal, Sheet, Skeleton, Container
+  lib/          no UI: api-client (the only fetch), products, cart, money, theme, utils (cn)
+public/products photos: <slug>-hero|card|thumb.webp
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design system
 
-## Deploy on Vercel
+- Colours, radius and shadows are tokens in `src/app/globals.css` (`@theme`), in light and dark. Components never use hex values or arbitrary values.
+- `cn()` (from `@/lib/utils`) for every `className`; variants with `cva`; typed props.
+- Tailwind only: no CSS files except `globals.css`.
+- The full rules are in [`AGENTS.md`](./AGENTS.md) (imported by `CLAUDE.md`), so AI coding tools follow them too.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn/ui on Base UI, class-variance-authority, lucide-react, Prettier, ESLint.
